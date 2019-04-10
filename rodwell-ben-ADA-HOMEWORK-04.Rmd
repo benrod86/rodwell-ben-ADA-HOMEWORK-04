@@ -9,22 +9,95 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+# Load the data
+d <- read.csv("KamilarAndCooperData.csv", header = T, sep = ",")
+head(d)
+str(d)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# [1]
+## Using the “KamilarAndCooperData.csv” dataset, run a linear regression looking at log(HomeRange_km2) in relation to log(Body_mass_female_mean) and report your β coeffiecients (slope and intercept).
+```{r}
+model <- lm(data = d, formula = log(HomeRange_km2) ~ log(Body_mass_female_mean))
+model
+summary(model)
+par(mfrow = c(2,2))
+
+# Coefficients
+model$coefficients
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+
+
+# [2]
+## Then, use bootstrapping to sample from your data 1000 times with replacement, each time fitting the same model and calculating the appropriate coefficients. This generates a sampling distribution for each β coefficient. Plot a histogram of these sampling distributions.
+
+```{r}
+n <- length(d[,1]) # Number of observations
+dsample <- d[sample(nrow(d), n, replace = T), ]
+head(dsample)
+str(dsample)
+
+## Loop to repeat it 1000 times while storing the beta coefficients
+n <- length(d[,1]) # Number of observations/rows in the dataset
+b <- 1000
+beta0 <- rep(0,b) # empty vector for bootstrapped beta0 values
+beta1 <- rep(0,b) # empty vector for bootstrapped beta1 values
+for (i in 1:b){
+  dsample <- d[sample(nrow(d), n, replace = T), ]
+  model <- lm(data = dsample, formula = log(HomeRange_km2) ~ log(Body_mass_female_mean))
+  beta0[i] <- model$coefficients[1] # storing the beta0 value in the empty vector
+  beta1[i] <- model$coefficients[2] # storing the beta1 value in the empty vector
+  }
+head(beta1)
+head(beta0)
+
+## Histograms of the bootstrapped beta distributions
+par(mfrow = c(1,2))
+hist(beta0)
+hist(beta1)
+par(mfrow = c(1,1))
+```
+
+
+
+# [3]
+## Estimate the standard error for each of your β coefficients as the standard deviation of the sampling distribution from your bootstrap.
+
+```{r}
+SEbeta0 <- sd(beta0)
+SEbeta0
+SEbeta1 <- sd(beta1)
+SEbeta1
+```
+
+
+# [4]
+## Also determine the 95% CI for each of your β coefficients based on the appropriate quantiles from your sampling distribution.
+
+```{r}
+
+```
+
+
+# [5]
+## How does your answer to part [3] compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
+
+```{r}
+
+```
+
+
+# [6]
+## How does your answer to part [4] compare to the 95% CI estimated from your entire dataset?
+
+```{r}
+
+```
+
