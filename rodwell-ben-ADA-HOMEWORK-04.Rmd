@@ -7,13 +7,18 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set(
+    fig.path = "img/"
+)
 ```
 
 ```{r}
 # Load the data
-d <- read.csv("KamilarAndCooperData.csv", header = T, sep = ",")
+library(curl)
+f <- curl("https://raw.githubusercontent.com/difiore/ADA-2019/master/KamilarAndCooperData.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = TRUE)
 head(d)
-str(d)
 ```
 
 
@@ -58,10 +63,10 @@ for (i in 1:b){
 head(beta1)
 head(beta0)
 
-## Histograms of the bootstrapped beta distributions
+## Histograms of the bootstrapped beta coefficients
 par(mfrow = c(1,2))
-hist(beta0)
-hist(beta1)
+hist(beta0, breaks = 20)
+hist(beta1, breaks = 20)
 par(mfrow = c(1,1))
 ```
 
@@ -82,22 +87,32 @@ SEbeta1
 ## Also determine the 95% CI for each of your β coefficients based on the appropriate quantiles from your sampling distribution.
 
 ```{r}
+beta0confupper <- mean(beta0) + qnorm(0.975) * SEbeta0
+beta0conflower <- mean(beta0) - qnorm(0.975) * SEbeta0
+beta0conf <- cbind(beta0conflower, beta0confupper)
+beta0conf
 
+beta1confupper <- mean(beta1) + qnorm(0.975) * SEbeta1
+beta1conflower <- mean(beta1) - qnorm(0.975) * SEbeta1
+beta1conf <- cbind(beta1conflower, beta1confupper)
+beta1conf 
 ```
 
 
 # [5]
 ## How does your answer to part [3] compare to the SE estimated from your entire dataset using the formula for standard error implemented in lm()?
 
-```{r}
 
-```
+In the original model that was ran in step 1 the coefficients for beta0 = 0.67293, and beta1 = 0.08488, and the estimated ones from the sampling distribution are beta0 = .6032588, and beta1 = 0.07758149 (the sampling distribution estimates will change each time the bootstrap is ran, but should be similar to these values). The standard error estimates from the sampling distributions is fairly close to the values for the beta coefficients from the original model.
 
 
 # [6]
 ## How does your answer to part [4] compare to the 95% CI estimated from your entire dataset?
 
+The confidence intervals that we have estimated are consistent with those of the original linear model.
 ```{r}
-
+confint(model)
+beta0conf
+beta1conf
 ```
 

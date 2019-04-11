@@ -3,6 +3,16 @@ library(dplyr)
 library(data.table)
 
 ## Load Data
+
+library(dplyr)
+library(readr)
+library(curl)
+f <- curl("https://raw.githubusercontent.com/difiore/ADA-2019/master/KamilarAndCooperData.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = TRUE)
+head(d)
+
+
+
 d <- read.csv("KamilarAndCooperData.csv", header = T, sep = ",")
 n <- length(d[,1])
 ## Part 1
@@ -41,16 +51,15 @@ for (i in 1:1000){
   }
 head(beta1)
 head(beta0)
-hist(beta0)
-hist(beta1)
 
-## Histograms of the bootstrapped beta distributions
+## Histograms of the bootstrapped beta coefficients
 par(mfrow = c(1,2))
-hist(beta0)
-hist(beta1)
+hist(beta0, breaks = 20)
+hist(beta1, breaks = 20)
 par(mfrow = c(1,1))
 ```
 
+confint(model)
 
 # [3]
 ## Estimate the standard error for each of your β coefficients
@@ -66,6 +75,16 @@ SEbeta1
 ## Also determine the 95% CI for each of your β coefficients based
 ## on the appropriate quantiles from your sampling distribution.
 
+
+beta0confupper <- mean(beta0) + qnorm(0.975) * SEbeta0
+beta0conflower <- mean(beta0) - qnorm(0.975) * SEbeta0
+beta0conf <- cbind(beta0conflower, beta0confupper)
+beta0conf
+
+beta1confupper <- mean(beta1) + qnorm(0.975) * SEbeta1
+beta1conflower <- mean(beta1) - qnorm(0.975) * SEbeta1
+beta1conf <- cbind(beta1conflower, beta1confupper)
+beta1conf 
 
 # [5]
 ## How does your answer to part [3] compare to the SE estimated
