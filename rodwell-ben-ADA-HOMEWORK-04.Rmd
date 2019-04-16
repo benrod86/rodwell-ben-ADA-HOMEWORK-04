@@ -115,4 +115,3 @@ confint(model)
 beta0conf
 beta1conf
 ```
-
